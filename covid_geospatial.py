@@ -21,18 +21,35 @@ aggregated_data = (
 
 indonesia_map = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
 
+# Tambahkan data ke peta sebagai blok warna berdasarkan jumlah kasus
 for _, row in aggregated_data.iterrows():
-    folium.CircleMarker(
-        location=[row['Latitude'], row['Longitude']],
-        radius=row['Total Cases']**0.5 / 100,  # Skala ukuran berdasarkan jumlah kasus
-        color='red',
-        fill=True,
-        fill_color='red',
+    folium.Choropleth(
+        geo_data={
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [row['Longitude'] - 0.5, row['Latitude'] - 0.5],
+                                [row['Longitude'] + 0.5, row['Latitude'] - 0.5],
+                                [row['Longitude'] + 0.5, row['Latitude'] + 0.5],
+                                [row['Longitude'] - 0.5, row['Latitude'] + 0.5],
+                                [row['Longitude'] - 0.5, row['Latitude'] - 0.5]
+                            ]
+                        ]
+                    }
+                }
+            ]
+        },
+        data=pd.DataFrame({"Value": [row['Total Cases']]}),
+        columns=["Value"],
+        key_on="Value",
+        fill_color="Reds",
         fill_opacity=0.6,
-        popup=(
-            f"Provinsi: {row['Province']}<br>"
-            f"Total Kasus: {row['Total Cases']}"
-        )
+        line_opacity=0.2
     ).add_to(indonesia_map)
 
 folium_static(indonesia_map)
