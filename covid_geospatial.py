@@ -21,35 +21,42 @@ aggregated_data = (
 
 indonesia_map = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
 
-# Tambahkan data ke peta sebagai blok warna berdasarkan jumlah kasus
+# Tambahkan blok warna berdasarkan jumlah kasus
 for _, row in aggregated_data.iterrows():
-    folium.Choropleth(
-        geo_data={
-            "type": "FeatureCollection",
-            "features": [
-                {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Polygon",
-                        "coordinates": [
-                            [
-                                [row['Longitude'] - 0.5, row['Latitude'] - 0.5],
-                                [row['Longitude'] + 0.5, row['Latitude'] - 0.5],
-                                [row['Longitude'] + 0.5, row['Latitude'] + 0.5],
-                                [row['Longitude'] - 0.5, row['Latitude'] + 0.5],
-                                [row['Longitude'] - 0.5, row['Latitude'] - 0.5]
-                            ]
+    geo_json = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [row['Longitude'] - 0.5, row['Latitude'] - 0.5],
+                            [row['Longitude'] + 0.5, row['Latitude'] - 0.5],
+                            [row['Longitude'] + 0.5, row['Latitude'] + 0.5],
+                            [row['Longitude'] - 0.5, row['Latitude'] + 0.5],
+                            [row['Longitude'] - 0.5, row['Latitude'] - 0.5]
                         ]
-                    }
+                    ]
+                },
+                "properties": {
+                    "Total Cases": row['Total Cases']
                 }
-            ]
-        },
-        data=pd.DataFrame({"Value": [row['Total Cases']]}),
-        columns=["Value"],
-        key_on="Value",
-        fill_color="Reds",
-        fill_opacity=0.6,
-        line_opacity=0.2
+            }
+        ]
+    }
+
+    color = "#ffcccc" if row['Total Cases'] < 1000 else "#ff6666" if row['Total Cases'] < 10000 else "#cc0000"
+
+    folium.GeoJson(
+        geo_json,
+        style_function=lambda feature, color=color: {
+            "fillColor": color,
+            "color": "black",
+            "weight": 0.5,
+            "fillOpacity": 0.6
+        }
     ).add_to(indonesia_map)
 
 folium_static(indonesia_map)
