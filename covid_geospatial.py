@@ -24,29 +24,58 @@ if 'City' in filtered_data.columns:
 else:
     group_by_columns = ['Province', 'Latitude', 'Longitude']  # Gunakan Provinsi jika City tidak tersedia
 
-aggregated_data = (
+# Agregasi Total Kasus
+aggregated_cases = (
     filtered_data.groupby(group_by_columns)
     .agg({'Total Cases': 'sum'})
     .reset_index()
 )
 
-# Buat peta interaktif dengan Folium
-indonesia_map = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
+# Agregasi Total Kematian
+aggregated_deaths = (
+    filtered_data.groupby(group_by_columns)
+    .agg({'Total Deaths': 'sum'})
+    .reset_index()
+)
 
-# Tambahkan marker untuk setiap lokasi pada tingkat detail lebih tinggi
-for _, row in aggregated_data.iterrows():
+# Peta 1: Total Kasus COVID-19
+indonesia_map_cases = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
+marker_cluster_cases = MarkerCluster().add_to(indonesia_map_cases)
+
+for _, row in aggregated_cases.iterrows():
     folium.CircleMarker(
         location=[row['Latitude'], row['Longitude']],
-        radius=row['Total Cases']**0.5 / 50,
+        radius=row['Total Cases']**0.5 / 100,  # Skala ukuran lingkaran
+        color='blue',
+        fill=True,
+        fill_color='blue',
+        fill_opacity=0.6,
+        popup=(
+            f"Lokasi: {row[group_by_columns[0]]}<br>"
+            f"Total Kasus: {row['Total Cases']}"
+        )
+    ).add_to(marker_cluster_cases)
+
+# Peta 2: Total Kematian COVID-19
+indonesia_map_deaths = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
+marker_cluster_deaths = MarkerCluster().add_to(indonesia_map_deaths)
+
+for _, row in aggregated_deaths.iterrows():
+    folium.CircleMarker(
+        location=[row['Latitude'], row['Longitude']],
+        radius=row['Total Deaths']**0.5 / 50,  # Skala ukuran lingkaran
         color='red',
         fill=True,
         fill_color='red',
         fill_opacity=0.6,
         popup=(
-            f"Provinsi: {row['Province']}<br>"
-            f"Total Kasus: {row['Total Cases']}"
+            f"Lokasi: {row[group_by_columns[0]]}<br>"
+            f"Total Kematian: {row['Total Deaths']}"
         )
-    ).add_to(indonesia_map)
+    ).add_to(marker_cluster_deaths)
 
-# Tampilkan peta di Streamlit
-folium_static(indonesia_map)
+# Tampilkan kedua peta secara bersamaan
+print("Peta Total Kasus:")
+display(indonesia_map_cases)
+print("\nPeta Total Kematian:")
+display(indonesia_map_deaths)
