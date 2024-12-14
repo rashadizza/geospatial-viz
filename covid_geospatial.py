@@ -18,7 +18,7 @@ covid_data['Date'] = pd.to_datetime(covid_data['Date'], format='%m/%d/%Y', error
 # Filter data untuk tanggal 1 Mei 2021
 filtered_data = covid_data[covid_data['Date'] == datetime(2021, 5, 1)]
 
-# Agregasi data berdasarkan lokasi yang lebih spesifik (misal, City/District jika tersedia)
+# Agregasi data berdasarkan lokasi yang lebih spesifik jika tersedia
 if 'City' in filtered_data.columns:
     group_by_columns = ['City', 'Latitude', 'Longitude']
 else:
