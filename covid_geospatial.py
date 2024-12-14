@@ -7,7 +7,7 @@ import os
 
 st.title("Sebaran Kasus Positif COVID-19 di Indonesia per 1 Mei 2021")
 
-file_path = '/content/covid_19_indonesia_time_series_all.csv' 
+file_path = 'covid_19_indonesia_time_series_all.csv' 
 covid_data = pd.read_csv(file_path)
 
 covid_data['Date'] = pd.to_datetime(covid_data['Date'], format='%m/%d/%Y', errors='coerce')
