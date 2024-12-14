@@ -3,4 +3,3 @@ folium
 datetime
 streamlit
 streamlit-folium
-json
