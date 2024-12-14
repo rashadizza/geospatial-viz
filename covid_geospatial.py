@@ -4,38 +4,14 @@ from datetime import datetime
 import streamlit as st
 from streamlit_folium import folium_static
 
-# CSS custom untuk mengubah background menjadi hitam
-page_bg = """
-<style>
-body {
-    background-color: black;
-    color: white;
-}
-h1, h2, h3, h4, h5, h6 {
-    color: white;
-}
-.stApp {
-    background-color: black;
-}
-</style>
-"""
-
-# Menambahkan CSS ke dalam aplikasi Streamlit
-st.markdown(page_bg, unsafe_allow_html=True)
-
-# Judul Aplikasi
 st.title("Sebaran Kasus Positif COVID-19 di Indonesia per 1 Mei 2021")
 
-# Path ke file data
 file_path = 'covid_19_indonesia_time_series_all.csv' 
 
-# Load data COVID-19
 covid_data = pd.read_csv(file_path)
 
-# Konversi kolom Date ke datetime
 covid_data['Date'] = pd.to_datetime(covid_data['Date'], format='%m/%d/%Y', errors='coerce')
 
-# Filter data untuk tanggal 1 Mei 2021
 filtered_data = covid_data[covid_data['Date'] == datetime(2021, 5, 1)]
 
 # Agregasi data berdasarkan lokasi yang lebih spesifik
@@ -68,5 +44,4 @@ for _, row in aggregated_data.iterrows():
         )
     ).add_to(indonesia_map)
 
-# Tampilkan peta
 folium_static(indonesia_map)
