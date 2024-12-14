@@ -24,7 +24,7 @@ aggregated_data = (
 )
 
 # Load GeoJSON file for Indonesia provinces
-geojson_path = 'indonesia-provinces.geojson'  # GeoJSON file for provinces
+geojson_path = 'indonesia.geojson'  # GeoJSON file for provinces
 if not os.path.exists(geojson_path):
     st.error("GeoJSON file for Indonesia provinces is missing.")
 else:
