@@ -54,3 +54,5 @@ for _, row in aggregated_data.iterrows():
             f"Total Kasus: {row['Total Cases']}"
         )
     ).add_to(indonesia_map)
+
+folium_static(indonesia_map)
