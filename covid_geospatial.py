@@ -24,35 +24,29 @@ if 'City' in filtered_data.columns:
 else:
     group_by_columns = ['Province', 'Latitude', 'Longitude']  # Gunakan Provinsi jika City tidak tersedia
 
-# filter data dari tanggal 1 Mei 2021
-df['Date'] = pd.to_datetime(df['Date'], format='%m/%d/%Y', errors='coerce')
-filtered_data = df[df['Date'] == datetime(2021, 5, 1)]
-
-# kelompok data berdasarkan provinsi dan hitung total kasus positif
 aggregated_data = (
-    filtered_data.groupby(['Province', 'Latitude', 'Longitude'])
+    filtered_data.groupby(group_by_columns)
     .agg({'Total Cases': 'sum'})
     .reset_index()
 )
 
-# membuat peta menggunakan folium
+# Buat peta interaktif dengan Folium
 indonesia_map = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
-# Peta 1: Total Kasus COVID-19
-indonesia_map_cases = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
-marker_cluster_cases = MarkerCluster().add_to(indonesia_map_cases)
 
+# Tambahkan marker untuk setiap lokasi pada tingkat detail lebih tinggi
 for _, row in aggregated_data.iterrows():
     folium.CircleMarker(
         location=[row['Latitude'], row['Longitude']],
-        radius=row['Total Cases']**0.5 / 100,
-        color='red',
+        radius=row['Total Cases']**0.5 / 50,  # Sesuaikan skala ukuran lingkaran
+        color='blue',
         fill=True,
-        fill_color='red',
+        fill_color='blue',
         fill_opacity=0.6,
         popup=(
-            f"Provinsi: {row['Province']}<br>"
+            f"Lokasi: {row[group_by_columns[0]]}<br>"
             f"Total Kasus: {row['Total Cases']}"
         )
     ).add_to(indonesia_map)
 
+# Tampilkan peta di Streamlit
 folium_static(indonesia_map)
