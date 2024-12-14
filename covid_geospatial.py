@@ -37,13 +37,13 @@ indonesia_map = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
 for _, row in aggregated_data.iterrows():
     folium.CircleMarker(
         location=[row['Latitude'], row['Longitude']],
-        radius=row['Total Cases']**0.5 / 50,  # Sesuaikan skala ukuran lingkaran
-        color='blue',
+        radius=row['Total Cases']**0.5 / 50,
+        color='red',
         fill=True,
-        fill_color='blue',
+        fill_color='red',
         fill_opacity=0.6,
         popup=(
-            f"Lokasi: {row[group_by_columns[0]]}<br>"
+            f"Provinsi: {row['Province']}<br>"
             f"Total Kasus: {row['Total Cases']}"
         )
     ).add_to(indonesia_map)
