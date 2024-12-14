@@ -33,7 +33,7 @@ indonesia_map = folium.Map(location=[-2.5489, 118.0149], zoom_start=5)
 for _, row in aggregated_data.iterrows():
     folium.CircleMarker(
         location=[row['Latitude'], row['Longitude']],
-        radius=row['Total Cases']**1 / 70,
+        radius=row['Total Cases']**0.5 / 70,
         color='red',
         fill=True,
         fill_color='red',
